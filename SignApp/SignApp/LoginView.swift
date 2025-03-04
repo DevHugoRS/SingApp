@@ -16,7 +16,7 @@ struct LoginView: View {
                 Text("Bem-vindo, \(authViewModel.user?.displayName ?? "Usuário")!")
             } else {
                 Button("Entrar com Google") {
-                    print("Login com Google pressionado")
+                    authViewModel.signInWithGoogle()
                 }
             }
         }
