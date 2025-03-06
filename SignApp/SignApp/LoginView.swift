@@ -10,13 +10,16 @@ import Firebase
 import FirebaseAuth
 import GoogleSignIn
 import FirebaseCore
+import AuthenticationServices
 
-// MARK: - ViewModel
+// MARK: - VIEWMODEL
 class LoginViewModel: ObservableObject {
     @Published var email: String = ""
     @Published var password: String = ""
     @Published var showAlert = false
     @Published var alertMessage = ""
+    @Published var isSecure: Bool = true
+    
     // Login com email.
     func loginWithEmail() {
         guard !email.isEmpty, !password.isEmpty else {
@@ -35,6 +38,7 @@ class LoginViewModel: ObservableObject {
         }
     }
     
+    // - Login com Google conta
     func loginWithGoogle() {
         guard (FirebaseApp.app()?.options.clientID) != nil else { return }
 
@@ -67,16 +71,71 @@ class LoginViewModel: ObservableObject {
         }
     }
     
+    //- Login com conta Apple
+    func handleAppleSignIn(_ authResults: ASAuthorization) {
+        guard let credential = authResults.credential as? ASAuthorizationAppleIDCredential else { return }
+        
+        let appleIDToken = credential.identityToken
+        let appleIDTokenString = String(data: appleIDToken ?? Data(), encoding: .utf8)
+        
+        let firebaseCredential = OAuthProvider.credential(withProviderID: "apple.com", idToken: appleIDTokenString ?? "", rawNonce: "")
+        
+        Auth.auth().signIn(with: firebaseCredential) { result, error in
+            if let error = error {
+                self.alertMessage = error.localizedDescription
+            } else {
+                self.alertMessage = "Login com Apple bem-sucedido!"
+            }
+            self.showAlert = true
+        }
+    }
 }
-
+    
+//MARK: - VIEW
 struct LoginView: View {
     @StateObject var viewModel = LoginViewModel()
+    @State private var navigateToRegister = false
 
     var body: some View {
-        VStack(spacing: 20) {
-            
-//            MARK: - Email
-            TextField("Email", text: $viewModel.email)
+        NavigationView {
+            VStack(spacing: 20) {
+                
+                VStack(alignment: .leading) {
+                    Text("Hello")
+                        .font(.system(size: 80, weight: .bold))
+                    
+                    Text("Sign In to your account")
+                        .foregroundColor(.gray)
+                }
+                .offset(x: -70, y: 0)
+                
+                
+                
+                //            MARK: - Email
+                TextField("Email", text: $viewModel.email)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 40) //: Forma da Borda
+                            .stroke(Color.black, lineWidth: 3) //:Cor e expessura da Borda
+                    )
+                    .cornerRadius(40)
+                    .padding(.horizontal)
+                
+                //            MARK: - Senha
+                
+                HStack {
+                    if viewModel.isSecure {
+                        SecureField("Password", text: $viewModel.password)
+                    } else {
+                        TextField("Password", text: $viewModel.password)
+                    }
+                    Button(action: { viewModel.isSecure.toggle()}) {
+                        Image(systemName: viewModel.isSecure ? "eye.slash" : "eye")
+                    }
+                    .foregroundColor(.gray)
+                    
+                }
                 .padding()
                 .background(Color(.systemGray6))
                 .overlay(
@@ -85,41 +144,72 @@ struct LoginView: View {
                 )
                 .cornerRadius(40)
                 .padding(.horizontal)
+                
+                HStack {
+                    Spacer()
+                    Text("Forgot your Password?")
+                        .foregroundColor(.gray)
+                        .font(.footnote)
+                        .padding(.trailing, 25)
+                }
             
-//            MARK: - Senha
-            SecureField("Senha", text: $viewModel.password)
-                .padding()
-                .background(Color(.systemGray6))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 40) //: Forma da Borda
-                        .stroke(Color.black, lineWidth: 3) //:Cor e expessura da Borda
-                )
-                .cornerRadius(40)
-                .padding(.horizontal)
-            
-//            MARK: - Button Login
-            Button("Login") {
-                viewModel.loginWithEmail()
+                //            MARK: - Button Login
+                Button(action: {
+                    viewModel.loginWithEmail()
+                }) {
+                    Text("Sign In")
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(
+                            LinearGradient(gradient: Gradient(colors: [Color.orange, Color.pink]), startPoint: .leading, endPoint: .trailing)
+                        )
+                        .foregroundColor(.white)
+                        .cornerRadius(40)
+                        .padding(.horizontal, 100)
+                }
+                .padding(.bottom, 10)
+
+                HStack {
+                    //            MARK: - Login Google
+                    
+                    Button(action: {
+                        viewModel.loginWithGoogle()
+                    }) {
+                        Image("google")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 50)
+                    }
+                    .padding()
+                    
+                    //            MARK: - Login Apple
+                    
+                    Button(action: {
+                        let request = ASAuthorizationAppleIDProvider().createRequest()
+                        request.requestedScopes = [.fullName, .email]
+                        
+                        let controller = ASAuthorizationController(authorizationRequests: [request])
+                        controller.performRequests()
+                    }) {
+                        Image(systemName: "apple.logo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 50, height: 50) // Tamanho do ícone
+                            .foregroundColor(.black) // Cor da logo
+                    }
+                    .padding()
+                }
+                
             }
-            .frame(width: 100, height: 50)
-            .background(.blue)
-            .foregroundColor(.white)
-            .cornerRadius(40)
-            .padding(.horizontal)
             .alert(isPresented: $viewModel.showAlert) {
-                Alert(title: Text("Atenção"), message: Text(viewModel.alertMessage), dismissButton: .default(Text("OK")))
-            }
-            
-//            MARK: - Login Google
-            
-            Button("Login com Google") {
-                viewModel.loginWithGoogle()
-            }
-            
-            
-        
-        } //:VStack
-        .padding()
+                Alert(title: Text("Atenção"),
+                      message: Text(viewModel.alertMessage),
+                      dismissButton: .default(Text("OK"))
+                )
+            }//:VStack
+            .padding()
+        } //: Nav.View
     }
 }
 
