@@ -195,10 +195,28 @@ struct LoginView: View {
                         Image(systemName: "apple.logo")
                             .resizable()
                             .scaledToFit()
+                            .padding()
                             .frame(width: 50, height: 50) // Tamanho do ícone
-                            .foregroundColor(.black) // Cor da logo
+                            .foregroundColor(.foreground) // Cor da logo
+                            .background(Circle().fill(.colorBack))
+                            
                     }
                     .padding()
+                    
+                } //: HStack
+                
+                HStack {
+                    Text("Don't have an account?")
+                    Button("Create") {
+                        navigateToRegister = true
+                    }
+                    .foregroundColor(.blue)
+                    .bold()
+                } //: HStack
+                .padding()
+                
+                NavigationLink(destination: RegisterView(), isActive: $navigateToRegister) {
+                    EmptyView()
                 }
                 
             }
