@@ -20,11 +20,19 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct SignAppApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var authViewModel = AuthViewModel()
     
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                LoginView()
+                if authViewModel.isAuthenticated {
+                    LoginView()
+                        .environmentObject(AuthViewModel())
+                        .preferredColorScheme(.light)
+                } else {
+                    ContentView()
+                        .environmentObject(authViewModel)
+                }
             }
         }
     }
