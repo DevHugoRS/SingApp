@@ -26,7 +26,7 @@ struct LoginView: View {
                         .ignoresSafeArea()
                     
                     VStack(spacing: 20) {
-                        
+                        Spacer()
                         VStack(alignment: .leading) {
                             Text("Hello")
                                 .font(.system(size: 80, weight: .bold))
@@ -34,9 +34,7 @@ struct LoginView: View {
                             Text("Sign In to your account")
                                 .foregroundColor(.gray)
                         }
-                        .offset(x: -70, y: 0)
-                        
-                        
+                        .padding(.leading, -140)
                         
                         //            MARK: - Email
                         TextField("Email", text: $viewModel.email)
@@ -48,6 +46,7 @@ struct LoginView: View {
                             )
                             .cornerRadius(40)
                             .padding(.horizontal)
+                            .shadow(color: .gray, radius: 10, x: 0, y: 8)
                         
                         //            MARK: - Senha
                         
@@ -71,6 +70,7 @@ struct LoginView: View {
                         )
                         .cornerRadius(40)
                         .padding(.horizontal)
+                        .shadow(color: .gray, radius: 10, x: 0, y: 8)
                         
                         HStack {
                             Spacer()
@@ -111,7 +111,6 @@ struct LoginView: View {
                             .padding()
                             
                             //            MARK: - Login Apple
-                            
                             Button(action: {
                                 let request = ASAuthorizationAppleIDProvider().createRequest()
                                 request.requestedScopes = [.fullName, .email]
@@ -158,6 +157,7 @@ struct LoginView: View {
                         )
                     }//:VStack
                     .padding()
+                    
                 }
             } //: Nav.View
         }
