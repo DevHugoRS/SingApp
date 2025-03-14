@@ -16,13 +16,9 @@ SignApp é um aplicativo de autenticação desenvolvido em SwiftUI, permitindo q
     •    Google Sign-In
     •    Apple Sign-In
 
-📸 Capturas de Tela
-
-(Adicione imagens aqui)
-
 📦 Como Executar
     1.    Clone este repositório:
-    git clone https://github.com/seu-usuario/seu-repositorio.git
+    git clone https://github.com/DevHugoRS/SingApp
     cd seu-repositorio
     
     2.    Abra o projeto no Xcode.
