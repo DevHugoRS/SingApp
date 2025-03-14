@@ -1,4 +1,6 @@
-
+| LoginView | RegisterView |
+|--------|--------|
+| ![Image](https://github.com/user-attachments/assets/1c7fc5c6-75b8-4bb6-9a70-1f3a7999c503)  |  ![Image](https://github.com/user-attachments/assets/457ebac3-3bec-47fd-a2e0-ecceff14506b) |
 📱 SignApp - Sistema de Autenticação
 
 SignApp é um aplicativo de autenticação desenvolvido em SwiftUI, permitindo que os usuários façam login e se registrem usando e-mail/senha, Google e Apple ID. O app utiliza Firebase Authentication para gerenciar a autenticação dos usuários de forma segura e eficiente.
