@@ -9,7 +9,7 @@ import SwiftUI
 import FirebaseAuth
 
 class AuthViewModel: ObservableObject {
-    @Published var isAuthenticated: Bool = false
+    @Published var isAuthenticated: Bool = true
     
     init() {
         checkAuthentication()
@@ -30,7 +30,8 @@ class AuthViewModel: ObservableObject {
     }
     
     func logout() {
-        try? Auth.auth().signOut()
-        self.isAuthenticated = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.isAuthenticated = false
+        }
     }
 }

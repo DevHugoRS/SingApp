@@ -22,18 +22,21 @@ struct SignAppApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject var authViewModel = AuthViewModel()
     
+    
     var body: some Scene {
         WindowGroup {
             NavigationView {
                 if authViewModel.isAuthenticated {
                     LoginView()
                         .environmentObject(AuthViewModel())
-                        .preferredColorScheme(.light)
+                        
                 } else {
                     ContentView()
                         .environmentObject(authViewModel)
+                        
                 }
             }
+            .preferredColorScheme(.light)
         }
     }
 }

@@ -16,7 +16,7 @@ struct LoginView: View {
     @StateObject var viewModel = LoginViewModel()
     
     var body: some View {
-            NavigationView {
+        NavigationStack {
                 ZStack {
                     //: BackGround
                     Rectangle()
@@ -37,7 +37,7 @@ struct LoginView: View {
                         .padding(.leading, -140)
                         
                         //            MARK: - Email
-                        TextField("Email", text: $viewModel.email)
+                        TextField("E-mail Address", text: $viewModel.email)
                             .padding()
                             .background(Color(.systemGray6))
                             .overlay(
@@ -72,12 +72,21 @@ struct LoginView: View {
                         .padding(.horizontal)
                         .shadow(color: .gray, radius: 10, x: 0, y: 8)
                         
+                        //: Forgot Your Password
                         HStack {
                             Spacer()
-                            Text("Forgot your Password?")
-                                .foregroundColor(.gray)
+                            HStack {
+                                Button("Forgot your Password?") {
+                                    showSheet.toggle()
+                                }
                                 .font(.footnote)
-                                .padding(.trailing, 25)
+                                .bold()
+                                .foregroundColor(.black)
+                            } //: HStack
+                            .padding(.trailing, 25)
+                            .sheet(isPresented: $showSheet, content: {
+                                RegisterView()
+                            })
                         }
                         
                         //            MARK: - Button Login
@@ -130,9 +139,10 @@ struct LoginView: View {
                             .padding()
                             
                         } //: HStack
-                        
-                        NavigationLink(destination: ContentView(), isActive: $viewModel.shouldNavigate) {
-                            EmptyView()
+                        // MARK: - Navegação para outra tela
+                        .navigationDestination(isPresented: $viewModel.shouldNavigate) {
+                            ContentView()
+                                .navigationBarBackButtonHidden(true) //:Remove botão de voltar
                         }
                         
                         HStack {
@@ -147,8 +157,6 @@ struct LoginView: View {
                         .sheet(isPresented: $showSheet, content: {
                             RegisterView()
                         })
-                        
-                        
                     }
                     .alert(isPresented: $viewModel.showAlert) {
                         Alert(title: Text("Atenção"),
@@ -158,12 +166,12 @@ struct LoginView: View {
                     }//:VStack
                     .padding()
                     
-                }
-            } //: Nav.View
+                } //: ZStack
+                .navigationBarBackButtonHidden(true) //:Remove botão de voltar
+            } //: Nav.Stack
         }
     }
 
 #Preview {
-    LoginView()
-        
+    LoginView()   
 }
